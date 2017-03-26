@@ -1,7 +1,6 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,24 +20,24 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         super(context, 0, earthquakes);
     }
 
-    @NonNull
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View listRow = convertView;
         if (listRow == null) {
-            listRow = LayoutInflater.from(getContext()).inflate(R.layout.earthquake_row, null);
+            listRow = LayoutInflater.from(getContext()).inflate(R.layout.earthquake_row, parent, false);
         }
 
         Earthquake earthquake = getItem(position);
-        TextView magnitudeTextView = (TextView) listRow.findViewById(R.id.magnitude_tf);
-        magnitudeTextView.setText("" + earthquake.getMagnitude());
+        TextView magnitudeView = (TextView) listRow.findViewById(R.id.magnitude);
+        magnitudeView.setText(earthquake.getMagnitude());
 
-        TextView cityTextView = (TextView) listRow.findViewById(R.id.city_tf);
-        cityTextView.setText(earthquake.getCity());
+        TextView cityView = (TextView) listRow.findViewById(R.id.city);
+        cityView.setText(earthquake.getCity());
 
-        TextView dateTextView = (TextView) listRow.findViewById(R.id.date_tf);
-        dateTextView.setText(earthquake.getDate());
+        TextView dateView = (TextView) listRow.findViewById(R.id.date);
+        dateView.setText(earthquake.getDate());
 
         return listRow;
     }

@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/magnitude_tf"
+        android:id="@+id/magnitude"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -15,7 +15,7 @@
         tools:text="7.2" />
 
     <TextView
-        android:id="@+id/city_tf"
+        android:id="@+id/city"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -23,7 +23,7 @@
         tools:text="San Francisco" />
 
     <TextView
-        android:id="@+id/date_tf"
+        android:id="@+id/date"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
