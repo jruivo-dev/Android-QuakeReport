@@ -17,6 +17,8 @@ import java.util.List;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
+    private static final String LOCATION_SEPARATOR = " of ";
+
 
     public EarthquakeAdapter(Context context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
@@ -25,6 +27,8 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        String primaryLocation;
+        String locationOffset;
 
         View listRow = convertView;
         if (listRow == null) {
@@ -35,8 +39,24 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         TextView magnitudeView = (TextView) listRow.findViewById(R.id.magnitude);
         magnitudeView.setText(currentEarthquake.getMagnitude());
 
-        TextView cityView = (TextView) listRow.findViewById(R.id.city);
-        cityView.setText(currentEarthquake.getCity());
+        String originalLocation = currentEarthquake.getLocation();
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+
+        } else {
+            locationOffset = "Near the ";
+            primaryLocation = originalLocation;
+        }
+
+
+        TextView primaryLocationView = (TextView) listRow.findViewById(R.id.primary_location);
+        primaryLocationView.setText(primaryLocation);
+
+        TextView offsetLocationView = (TextView) listRow.findViewById(R.id.offset_location);
+        offsetLocationView.setText(locationOffset);
 
         TextView dateView = (TextView) listRow.findViewById(R.id.date);
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());

@@ -20,7 +20,7 @@ public class Earthquake {
         return mMagnitude;
     }
 
-    public String getCity() {
+    public String getLocation() {
         return mCity;
     }
 
