@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,30 +25,39 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
+    /**
+     * URL for earthquake data from the USGS dataset
+     */
+    private static final String USGS_REQUEST_URL =
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+
+    private EarthquakeAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        // Create a fake list of earthquake locations.
-        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+        EarthquakeAsyncTask earthquakeAsyncTask = new EarthquakeAsyncTask();
+        earthquakeAsyncTask.execute(USGS_REQUEST_URL);
+
+        adapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Earthquake earthquake = adapter.getItem(position);
 //                Toast.makeText(EarthquakeActivity.this, earthquakes.get(position).getUrl(), Toast.LENGTH_SHORT).show();
-                openWebPage(earthquakes.get(position).getUrl());
+                openWebPage(earthquake.getUrl());
             }
         });
-
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
 
 
         // Set the adapter on the {@link ListView}
@@ -60,6 +70,25 @@ public class EarthquakeActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
+        }
+    }
+
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>> {
+
+        @Override
+        protected List<Earthquake> doInBackground(String... urls) {
+            if (urls.length == 0 || urls[0] == null)
+                return null;
+
+            List<Earthquake> earthquakes = QueryUtils.fetchEarthquakeData(urls[0]);
+            return earthquakes;
+        }
+
+        @Override
+        protected void onPostExecute(List<Earthquake> data) {
+            adapter.clear();
+            if (data != null && !data.isEmpty())
+                adapter.addAll(data);
         }
     }
 }
